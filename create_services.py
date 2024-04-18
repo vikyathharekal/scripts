@@ -7,11 +7,13 @@ import time
 
 def create_directory_and_yaml(repo_name, num_directories, yaml_filename, yaml_content_template):
     # GitHub username and personal access token
-    username = "vikyathharekal"
-    token = "<token>"
+    username = ""
+    token = ""
+    prefix_path = "mock_rserver_root/configs/services/"
+    suffix_path = ".ownership/"
 
     # Base URL for GitHub API
-    base_url = "https://api.github.com/repos/{}/{}/contents/".format(username, repo_name)
+    base_url = "https://api.github.com/repos/{}/{}/contents/{}".format(username, repo_name, prefix_path)
 
     # Headers for authentication
     headers = {
@@ -26,31 +28,19 @@ def create_directory_and_yaml(repo_name, num_directories, yaml_filename, yaml_co
         directory_name = random.choice(list(english_words)).lower() + "-service"
 
         # Create directory
-        directory_path = directory_name + "/"
+        directory_path = directory_name + suffix_path
         directory_data = {
-            # "path": directory_path,
             "message": "Create directory '{}'".format(directory_path)
-            # "branch": "main",
-            # "committer": {"name":"Vikyath Harekal","email":"vikyath.harekal@harness.io"}
         }
-        # url = base_url + directory_path
-        # print("URL '{}' ".format(url))
-        # directory_response = requests.put(url, headers=headers, json=directory_data)
-        # if directory_response.status_code == 201:
-        #     print("Directory '{}' created successfully.".format(directory_path))
-        # else:
-        #     print("Failed to create directory '{}'. Status code: {}".format(directory_path, directory_response.status_code))
-        #     return
 
         # Replace directory name in YAML content template
         updated_yaml_content = yaml_content_template.replace("<replace with directory_name>", directory_name)
-        updated_yaml_content = updated_yaml_content.replace("<replace with source-location>", "url:https://github.com/vikyathharekal/book-my-tickets/blob/main/{}".format(directory_name))
+        updated_yaml_content = updated_yaml_content.replace("<replace with source-location>", "url:https://github.com/vikyathharekal/book-my-tickets/blob/main/{}{}".format(prefix_path, directory_name))
 
         # Create YAML file
         yaml_file_content = updated_yaml_content.strip()
         yaml_file_path = directory_path + yaml_filename
         url = base_url + yaml_file_path
-        # print("URL '{}' ".format(url))
         
         yaml_file_data = {
             "message": "Create YAML file '{}'".format(yaml_file_path),
@@ -60,19 +50,12 @@ def create_directory_and_yaml(repo_name, num_directories, yaml_filename, yaml_co
         yaml_file_response = requests.put(url, headers=headers, json=yaml_file_data)
         if yaml_file_response.status_code != 201:
             print("Failed to create YAML file '{}'. Status code: {}".format(yaml_file_path, yaml_file_response.status_code))
-        # else:
-        #     print("YAML file '{}' created successfully.".format(yaml_file_path))
-
 
         print("Created '{}' services".format(i + 1))
-        # # Sleep after every 20 iterations
-        # if (i + 1) % 20 == 0:
-        #     print("Sleeping for 10 seconds...")
-        #     time.sleep(5)  # Sleep for 5 seconds
 
 # Replace these values with your repository name and specify the number of directories you want to create
-repository_name = "book-my-tickets"
-num_directories = 499  # Specify the number of directories you want to create
+repository_name = ""
+num_directories = 10  # Specify the number of directories you want to create
 yaml_filename = "catalog-info.yaml"
 
 # YAML content template with placeholder for directory name and source location
@@ -82,7 +65,7 @@ kind: Component
 metadata:
   tags:
     - java
-    - book-my-tickets
+    - map-my-trip
   name: <replace with directory_name>
   annotations:
     backstage.io/source-location: <replace with source-location>
@@ -90,13 +73,12 @@ metadata:
     jira/project-key: IDP
     backstage.io/kubernetes-label-selector: 'app=idp-ui'
     backstage.io/kubernetes-namespace: '63feee14cbf66e3c798c4bdc'
-  spec:
-    type: service
-    system: movie
-    lifecycle: experimental
-    owner: Harness_Account_All_Users
+spec:
+  type: service
+  system: movie
+  lifecycle: experimental
+  owner: Harness_Account_All_Users
 """
 
 # Call the function to create directories and YAML files
 create_directory_and_yaml(repository_name, num_directories, yaml_filename, yaml_content_template)
-
