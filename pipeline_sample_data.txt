@@ -1,4 +1,4 @@
-db.getCollection('pipeline').insertMany([
+db.getCollection('pipelines').insertMany([
 {
     "accountIdentifier" : "kmpySmUISimoRrJL6NL73w",
     "orgIdentifier" : "build",
